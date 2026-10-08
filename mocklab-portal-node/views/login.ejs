@@ -1,0 +1,23 @@
+<%- include('partials/header') %>
+
+<div class="card login-card">
+    <h2>Log in</h2>
+    <p class="muted">Demo credentials are already filled in. Just press the button.</p>
+
+    <% if (error) { %>
+        <div class="alert"><%= error %></div>
+    <% } %>
+
+    <form method="post" action="/">
+        <label for="username">Username</label>
+        <input id="username" name="username" type="text" value="<%= DEMO_USER %>">
+
+        <label for="password">Password</label>
+        <%# Pre-filled on purpose (demo only). Never do this in a real application. %>
+        <input id="password" name="password" type="password" value="<%= DEMO_PASSWORD %>">
+
+        <button class="btn btn-primary" type="submit">Log in</button>
+    </form>
+</div>
+
+<%- include('partials/footer') %>

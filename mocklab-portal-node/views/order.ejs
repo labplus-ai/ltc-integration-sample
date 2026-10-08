@@ -1,0 +1,47 @@
+<%- include('partials/header') %>
+
+<a class="back-link" href="/orders">&larr; Back to orders</a>
+
+<% if (!order) { %>
+    <div class="card"><p>This order does not exist.</p></div>
+<% } else { %>
+    <div class="card info-card">
+        <div><span class="label">Order number</span><%= order.number %></div>
+        <div><span class="label">Date</span><%= order.date %></div>
+        <div><span class="label">Patient</span><%= patient.firstName %> <%= patient.lastName %></div>
+        <div><span class="label">Doctor</span><%= order.doctor %></div>
+    </div>
+
+    <div class="eyebrow eyebrow-line">Results</div>
+    <h2 class="section-title">Test results</h2>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr><th>Test</th><th>Result</th><th>Unit</th><th>Reference range</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+            <% for (const exam of order.examinations) { %>
+                <tr class="exam-row"><td colspan="5"><%= exam.name %></td></tr>
+                <% for (const param of exam.params) { const flag = resultFlag(param); %>
+                    <tr>
+                        <td><strong><%= param.name %></strong></td>
+                        <td><%= param.value %></td>
+                        <td><%= param.unit %></td>
+                        <td><%= referenceText(param) %></td>
+                        <td><% if (flag === 'none') { %>
+                                <span class="muted">-</span>
+                            <% } else { %>
+                                <span class="badge badge-<%= flag %>"><%= flag.charAt(0).toUpperCase() + flag.slice(1) %></span>
+                            <% } %></td>
+                    </tr>
+                <% } %>
+            <% } %>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Integration extension point: the LabTest Checker integration will be added below the results. -->
+<% } %>
+
+<%- include('partials/footer') %>

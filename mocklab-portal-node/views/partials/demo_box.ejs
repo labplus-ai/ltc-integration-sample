@@ -1,0 +1,16 @@
+<%# DEMO ONLY box with the buttons that simulate the lab. Not part of a real patient portal. %>
+<div class="demo-box">
+    <div>
+        <span class="pill pill-demo">Demo only</span>
+        <h3>Simulate new test results</h3>
+        <p>
+            Real patients cannot add orders. This button simulates the situation where you had new
+            tests done at MockLab and the lab has just released the results: a <strong>new order with a
+            full set of results</strong> appears in the list below, all at once.
+        </p>
+    </div>
+    <form method="post" action="/demo" class="demo-actions">
+        <button class="btn btn-teal" type="submit" name="action" value="simulate">Simulate new test results</button>
+        <button class="btn btn-outline" type="submit" name="action" value="reset">Reset demo data</button>
+    </form>
+</div>

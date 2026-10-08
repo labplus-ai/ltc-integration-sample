@@ -1,0 +1,9 @@
+.git
+.idea
+.vscode
+node_modules
+dist
+README.md
+docker-compose.yml
+storage/*.json
+.env
