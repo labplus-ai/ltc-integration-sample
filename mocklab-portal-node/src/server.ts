@@ -1,17 +1,13 @@
 // Entry point: sets up the web server and mounts the pages.
 import express from 'express';
 import session from 'express-session';
-import './env.js';
-import { env } from './env.js';
-import { isLoggedIn } from './auth.js';
-import { ordersExist } from './lab.js';
-import { resetDemo } from './simulator.js';
-import * as view from './view.js';
-import { login } from './routes/login.js';
-import { logout } from './routes/logout.js';
-import { orders } from './routes/orders.js';
-import { order } from './routes/order.js';
-import { demo } from './routes/demo.js';
+import { join } from 'node:path';
+import { env } from './services/env.js';
+import { login } from './login/index.js';
+import { logout } from './logout/index.js';
+import { orders } from './orders/index.js';
+import { order } from './order/index.js';
+import { simulation } from './data-simulation__only-for-demo/index.js';
 
 // Data kept in the session.
 declare module 'express-session' {
@@ -22,28 +18,18 @@ declare module 'express-session' {
 }
 
 const app = express();
-app.set('view engine', 'ejs');
-app.set('views', 'views');
-app.use('/assets', express.static('assets'));
+app.use('/styles', express.static(join(import.meta.dirname, 'styles')));
 app.use(express.urlencoded({ extended: false }));
 
 // Sessions are kept in memory (lost on restart). The secret is hardcoded for demo simplicity.
 app.use(session({ secret: 'mocklab-demo-secret', resave: false, saveUninitialized: false }));
 
-// Make the logged-in state and the display helpers available in every template.
-app.use((req, res, next) => {
-  res.locals.loggedIn = isLoggedIn(req);
-  res.locals.user = req.session.user;
-  Object.assign(res.locals, view);
-  next();
-});
+app.get('/', (_req, res) => res.redirect('/login/'));
+app.use(login, logout);
 
-app.use(login, logout, orders, order, demo);
-
-// First run: put the starting orders in place.
-if (!ordersExist()) {
-  resetDemo();
-}
+// Everything below requires a logged-in user.
+app.use((req, res, next) => (req.session.user ? next() : res.redirect('/login/')));
+app.use(orders, order, simulation);
 
 const port = Number(env('PORT', '3000'));
 app.listen(port, () => console.log(`MockLab portal listening on http://localhost:${port}`));

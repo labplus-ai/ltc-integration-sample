@@ -4,7 +4,7 @@ A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in
 
 There is also a **Node.js / TypeScript version** of the same portal in `../mocklab-portal-node`.
 
-It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `order.php` only has a placeholder for it.
+It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `src/order/template.php` only has a placeholder for it.
 
 ## Demo credentials
 
@@ -26,41 +26,42 @@ Note: the result files are in the form the lab keeps them, so some text results 
 
 ## Configuration (.env)
 
-The app can read settings from an optional `.env` file in the project root. Copy the template and edit it:
+Settings are optional and read from environment variables or from a `.env` file in the project root (next to `src/`). Copy the template and edit it:
 
 ```bash
 cp .env.dist .env
 ```
 
-`.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In code use `env('KEY', 'default')`. With Docker the file is picked up automatically because the project is mounted into the container.
+`.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In code use `env('KEY', 'default')` (from `src/services/env.php`). With Docker the file is passed to the container automatically.
 
 ## Project structure
 
-The code is split into the **portal** (what a real patient portal would have) and the **demo simulator** (fake lab, only for this demo).
+Every page is a folder in `src/` with `index.php` (logic) and `template.php` (HTML), and the folder name is its URL (`/orders/`, `/order/?id=3`, ...). No rewrite rules are needed.
+
+Everything fake is in one folder, **`data-simulation__only-for-demo/`**: it pretends to be the lab that produces new results. You do not need to read it when studying the integration.
 
 ```
 mocklab-portal-php/
-├── index.php            Login page
-├── orders.php           List of orders
-├── order.php            Order details with the results table
-├── logout.php           Ends the session
-├── demo.php             DEMO ONLY: handles the "simulate" / "reset" buttons
-├── includes/
-│   ├── bootstrap.php    Included by every page: session + loads the files below
-│   ├── env.php          env() - reads the optional .env file
-│   ├── auth.php         Demo credentials, login helpers
-│   ├── lab.php          The lab's data: patient and orders (stored in storage/orders.json)
-│   ├── view.php         Display helpers (escaping, result flags, reference ranges)
-│   ├── header.php       Shared page header + hero
-│   ├── footer.php       Shared page footer
-│   ├── simulator.php    DEMO ONLY: fake lab that releases new results from data/results/
-│   └── demo_box.php     DEMO ONLY: the box with the simulate / reset buttons
-├── data/
-│   ├── patient.php      The patient (incl. national ID)
-│   └── results/         Result sets the simulator releases one by one (001.json, 002.json, ...)
-├── storage/             Demo state (orders.json, created automatically, git-ignored)
-├── assets/style.css     All styles (colors as CSS variables)
-├── .env.dist            Template for the optional .env settings file
+├── src/                                  The web root
+│   ├── index.php                         Redirects to /login/
+│   ├── login/        index.php, template.php
+│   ├── orders/       index.php, template.php     List of orders
+│   ├── order/        index.php, template.php     Order details with the results table
+│   ├── logout/       index.php
+│   ├── services/
+│   │   ├── db.php                        The lab's data: patient and orders (storage/orders.json)
+│   │   ├── helpers.php                   Display helpers (escaping, result flags, reference ranges)
+│   │   └── env.php                       env() - reads environment variables / .env
+│   ├── partials/     header.php, footer.php
+│   ├── styles/       style.css           All styles (colors as CSS variables)
+│   └── data-simulation__only-for-demo/   DEMO ONLY, not part of a real portal
+│       ├── index.php                     Handles the "simulate" / "reset" buttons
+│       ├── demo_box.php                  The box with the buttons
+│       ├── simulator.php                 Releases the next result set from results/
+│       ├── patient.php                   The patient (incl. national ID)
+│       └── results/                      Result sets (001.json, 002.json, ...)
+├── storage/                              Demo state (orders.json, created automatically, git-ignored)
+├── .env.dist                             Template for the optional .env file
 ├── Dockerfile
 ├── docker-compose.yml
 └── README.md
@@ -76,7 +77,7 @@ docker compose up --build
 
 Open <http://localhost:8080>.
 
-The source code is mounted into the container, so edits are visible after a page refresh (no rebuild needed). The demo state (`orders.json`) lives in a Docker volume, so it survives restarts.
+The `src/` folder is mounted into the container, so edits are visible after a page refresh (no rebuild needed). The demo state (`orders.json`) lives in a Docker volume, so it survives restarts.
 
 Stop it with `Ctrl+C`, or, if it runs in the background (`docker compose up -d --build`):
 
@@ -89,28 +90,28 @@ docker compose down -v     # stop and also wipe the demo state
 
 Prerequisites: **PHP 8.1 or newer** with the `session` and `json` extensions (enabled by default in standard PHP builds). Check with `php -v` and `php -m`.
 
-The web server user must be able to **write to the `storage/` folder** (the built-in server uses your own user, so it just works; for Apache/Nginx run e.g. `chown www-data storage`, or `chmod 777 storage` for a quick local test).
+The web server user must be able to **write to the `storage/` folder** in the project root (the built-in server uses your own user, so it just works; for Apache/Nginx run e.g. `chown www-data storage`, or `chmod 777 storage` for a quick local test). Point the web server at the **`src/`** folder, not at the project root.
 
 ### a) PHP built-in server (easiest)
 
 From the project directory:
 
 ```bash
-php -S localhost:8080
+php -S localhost:8080 -t src
 ```
 
 Open <http://localhost:8080>.
 
 ### b) Apache
 
-Point a virtual host at the project directory (`mod_php` or PHP-FPM must be enabled; `mod_rewrite` is not needed):
+Point a virtual host at the `src/` folder (`mod_php` or PHP-FPM must be enabled; `mod_rewrite` is not needed):
 
 ```apache
 <VirtualHost *:8080>
     ServerName mocklab.local
-    DocumentRoot /path/to/mocklab-portal-php
+    DocumentRoot /path/to/mocklab-portal-php/src
 
-    <Directory /path/to/mocklab-portal-php>
+    <Directory /path/to/mocklab-portal-php/src>
         Require all granted
         DirectoryIndex index.php
     </Directory>
@@ -125,7 +126,7 @@ Add `Listen 8080` if needed, reload Apache and open <http://localhost:8080>.
 server {
     listen 8080;
     server_name mocklab.local;
-    root /path/to/mocklab-portal-php;
+    root /path/to/mocklab-portal-php/src;
     index index.php;
 
     location / {
@@ -152,4 +153,4 @@ Adjust the `fastcgi_pass` value to your PHP-FPM socket, then reload Nginx and op
 
 ## What's next
 
-LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `order.php`.
+LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `src/order/template.php`.

@@ -3,13 +3,15 @@ services:
     build: .
     ports:
       - "3000:3000"
+    # Optional settings (copy .env.dist to .env). The file does not have to exist.
+    env_file:
+      - path: .env
+        required: false
     # Restarts the server automatically when you edit the code.
     command: npm run dev
     volumes:
       # Mount the source for live editing (no rebuild needed after code changes).
-      - .:/app
-      # Keep the dependencies installed in the image (the mount above would hide them).
-      - /app/node_modules
+      - ./src:/app/src
       # Keep the demo state (orders) in a Docker volume, so it survives restarts.
       # `docker compose down -v` removes it, which resets the demo.
       - demo-state:/app/storage

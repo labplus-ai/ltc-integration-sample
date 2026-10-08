@@ -1,10 +1,10 @@
 # MockLab Patient Portal (demo) - Node.js / TypeScript
 
-A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in TypeScript on Node.js with Express and EJS templates (no database, no frontend framework). Orders are kept in a small JSON file.
+A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in TypeScript on Node.js with Express (no database, no frontend framework, no template engine: pages are plain functions returning HTML). Orders are kept in a small JSON file.
 
 This is the **same portal as the PHP version** (`../mocklab-portal-php`): same screens, same data, same behaviour. Use whichever is easier to read for you.
 
-It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `views/order.ejs` only has a placeholder for it.
+It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `src/order/template.ts` only has a placeholder for it.
 
 ## Demo credentials
 
@@ -32,37 +32,37 @@ The app can read settings from an optional `.env` file in the project root. Copy
 cp .env.dist .env
 ```
 
-`.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In code use `env('KEY', 'default')` (from `src/env.ts`). You can also set `PORT` there (default `3000`). With Docker the file is picked up automatically because the project is mounted into the container.
+Settings come from environment variables or from the `.env` file in the project root (next to `src/`). `.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In code use `env('KEY', 'default')` (from `src/services/env.ts`). You can also set `PORT` there (default `3000`). With Docker the file is passed to the container automatically.
 
 ## Project structure
 
-The code is split into the **portal** (what a real patient portal would have) and the **demo simulator** (fake lab, only for this demo).
+Every page is a folder in `src/` with `index.ts` (logic) and `template.ts` (HTML), and the folder name is its URL (`/orders/`, `/order/?id=3`, ...). The URLs are the same as in the PHP version.
+
+Everything fake is in one folder, **`data-simulation__only-for-demo/`**: it pretends to be the lab that produces new results. You do not need to read it when studying the integration.
 
 ```
 mocklab-portal-node/
 ├── src/
-│   ├── server.ts        Entry point: web server, session, mounts the pages
-│   ├── routes/
-│   │   ├── login.ts     Login page
-│   │   ├── orders.ts    List of orders
-│   │   ├── order.ts     Order details with the results table
-│   │   ├── logout.ts    Ends the session
-│   │   └── demo.ts      DEMO ONLY: handles the "simulate" / "reset" buttons
-│   ├── env.ts           env() - reads the optional .env file
-│   ├── auth.ts          Demo credentials, login helpers
-│   ├── lab.ts           The lab's data: patient and orders (stored in storage/orders.json)
-│   ├── view.ts          Display helpers (result flags, reference ranges, titles)
-│   ├── types.ts         TypeScript types of the data
-│   └── simulator.ts     DEMO ONLY: fake lab that releases new results from data/results/
-├── views/               EJS page templates
-│   ├── login.ejs, orders.ejs, order.ejs
-│   └── partials/        header.ejs, footer.ejs, demo_box.ejs (DEMO ONLY)
-├── data/
-│   ├── patient.json     The patient (incl. national ID)
-│   └── results/         Result sets the simulator releases one by one (001.json, 002.json, ...)
-├── storage/             Demo state (orders.json, created automatically, git-ignored)
-├── assets/style.css     All styles (colors as CSS variables)
-├── .env.dist            Template for the optional .env settings file
+│   ├── server.ts                         Entry point: web server, session, mounts the pages
+│   ├── login/        index.ts, template.ts
+│   ├── orders/       index.ts, template.ts       List of orders
+│   ├── order/        index.ts, template.ts       Order details with the results table
+│   ├── logout/       index.ts
+│   ├── services/
+│   │   ├── db.ts                         The lab's data: patient and orders (storage/orders.json)
+│   │   ├── helpers.ts                    Display helpers (escaping, result flags, reference ranges)
+│   │   ├── env.ts                        env() - reads environment variables / .env
+│   │   └── types.ts                      TypeScript types of the data
+│   ├── partials/     header.ts, footer.ts
+│   ├── styles/       style.css           All styles (colors as CSS variables)
+│   └── data-simulation__only-for-demo/   DEMO ONLY, not part of a real portal
+│       ├── index.ts                      Handles the "simulate" / "reset" buttons
+│       ├── demo_box.ts                   The box with the buttons
+│       ├── simulator.ts                  Releases the next result set from results/
+│       ├── patient.json                  The patient (incl. national ID)
+│       └── results/                      Result sets (001.json, 002.json, ...)
+├── storage/                              Demo state (orders.json, created automatically, git-ignored)
+├── .env.dist                             Template for the optional .env file
 ├── package.json, tsconfig.json
 ├── Dockerfile
 ├── docker-compose.yml
@@ -79,7 +79,7 @@ docker compose up --build
 
 Open <http://localhost:3000>.
 
-The source code is mounted into the container and the server restarts automatically when you edit a file (no rebuild needed). The demo state (`orders.json`) lives in a Docker volume, so it survives restarts.
+The `src/` folder is mounted into the container and the server restarts automatically when you edit a file (no rebuild needed). The demo state (`orders.json`) lives in a Docker volume, so it survives restarts.
 
 Stop it with `Ctrl+C`, or, if it runs in the background (`docker compose up -d --build`):
 
@@ -105,17 +105,9 @@ Open <http://localhost:3000>. To use another port: `PORT=8080 npm start` (or set
 
 `npm start` runs the TypeScript sources directly (with `tsx`), so there is no build step. `npm run typecheck` checks the types.
 
-### b) Compiled JavaScript
+Run the commands from the project directory. The `storage/` folder (next to `src/`) must be writable.
 
-```bash
-npm install
-npm run build      # compiles src/ to dist/
-npm run start:built
-```
-
-Run it from the project directory (it reads `data/`, `views/`, `assets/` and `storage/` relative to it).
-
-### c) Behind Nginx (reverse proxy)
+### b) Behind Nginx (reverse proxy)
 
 Start the app as above (e.g. on port 3000) and let Nginx forward to it:
 
@@ -143,4 +135,4 @@ Reload Nginx and open <http://localhost:8080>. Apache works the same way with `P
 
 ## What's next
 
-LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `views/order.ejs`.
+LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `src/order/template.ts`.

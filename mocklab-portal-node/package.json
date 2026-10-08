@@ -10,12 +10,9 @@
   "scripts": {
     "start": "tsx src/server.ts",
     "dev": "tsx watch src/server.ts",
-    "typecheck": "tsc --noEmit",
-    "build": "tsc",
-    "start:built": "node dist/server.js"
+    "typecheck": "tsc"
   },
   "dependencies": {
-    "ejs": "^7.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0"
   },
