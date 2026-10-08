@@ -1,0 +1,14 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      # Mount the source for live editing (no rebuild needed after code changes).
+      - .:/var/www/html
+      # Keep the demo state (orders) in a Docker volume, so it is writable and survives restarts.
+      # `docker compose down -v` removes it, which resets the demo.
+      - demo-state:/var/www/html/storage
+
+volumes:
+  demo-state:

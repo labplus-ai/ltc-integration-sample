@@ -1,0 +1,218 @@
+{
+  "examinations": [
+    {
+      "examinationId": 20,
+      "name": "Complete blood count",
+      "params": [
+        {
+          "paramId": 24,
+          "name": "White blood cells (WBC)",
+          "value": 7.87,
+          "unit": "thous/µl",
+          "normLow": 4,
+          "normHigh": 10
+        },
+        {
+          "paramId": 25,
+          "name": "Red blood cells (RBC)",
+          "value": 5,
+          "unit": "mln/µl",
+          "normLow": 4.6,
+          "normHigh": 6.5
+        },
+        {
+          "paramId": 26,
+          "name": "Haemoglobin (Hb)",
+          "value": 14,
+          "unit": "g/dl",
+          "normLow": 13.5,
+          "normHigh": 18
+        },
+        {
+          "paramId": 27,
+          "name": "Haematocrit (Hct)",
+          "value": 42.3,
+          "unit": "%",
+          "normLow": 40,
+          "normHigh": 52
+        },
+        {
+          "paramId": 28,
+          "name": "MCV",
+          "value": 84.6,
+          "unit": "fl",
+          "normLow": 80,
+          "normHigh": 98
+        },
+        {
+          "paramId": 35,
+          "name": "MCH",
+          "value": 28,
+          "unit": "pg",
+          "normLow": 27,
+          "normHigh": 32
+        },
+        {
+          "paramId": 23,
+          "name": "MCHC",
+          "value": 33.1,
+          "unit": "g/dl",
+          "normLow": 31,
+          "normHigh": 37
+        },
+        {
+          "paramId": 29,
+          "name": "Platelets (PLT)",
+          "value": 246,
+          "unit": "thous/µl",
+          "normLow": 150,
+          "normHigh": 400
+        },
+        {
+          "paramId": 36,
+          "name": "RDW-SD",
+          "value": 41,
+          "unit": "fl",
+          "normLow": 36,
+          "normHigh": 47
+        },
+        {
+          "paramId": 37,
+          "name": "RDW-CV",
+          "value": 13.2,
+          "unit": "%",
+          "normLow": 11.5,
+          "normHigh": 14.5
+        },
+        {
+          "paramId": 38,
+          "name": "PDW",
+          "value": 13.1,
+          "unit": "fl",
+          "normLow": 10,
+          "normHigh": 17.4
+        },
+        {
+          "paramId": 39,
+          "name": "MPV",
+          "value": 11.3,
+          "unit": "fl",
+          "normLow": 7,
+          "normHigh": 12
+        },
+        {
+          "paramId": 40,
+          "name": "P-LCR",
+          "value": 35.3,
+          "unit": "%",
+          "normLow": 19.3,
+          "normHigh": 47.1
+        },
+        {
+          "paramId": 41,
+          "name": "PCT",
+          "value": 0.3,
+          "unit": "%",
+          "normLow": 0.12,
+          "normHigh": 0.36
+        },
+        {
+          "paramId": 31,
+          "name": "Neutrophils#",
+          "value": 4.02,
+          "unit": "thous/µl",
+          "normLow": 1.9,
+          "normHigh": 7
+        },
+        {
+          "paramId": 30,
+          "name": "Lymphocytes#",
+          "value": 2.82,
+          "unit": "thous/µl",
+          "normLow": 1.5,
+          "normHigh": 4.5
+        },
+        {
+          "paramId": 32,
+          "name": "Monocytes#",
+          "value": 0.84,
+          "unit": "thous/µl",
+          "normLow": 0.1,
+          "normHigh": 0.9
+        },
+        {
+          "paramId": 33,
+          "name": "Eosinophils#",
+          "value": 0.17,
+          "unit": "thous/µl",
+          "normLow": 0.05,
+          "normHigh": 0.5
+        },
+        {
+          "paramId": 34,
+          "name": "Basophils#",
+          "value": 0.02,
+          "unit": "thous/µl",
+          "normLow": 0,
+          "normHigh": 0.1
+        },
+        {
+          "paramId": 44,
+          "name": "neutrophils%",
+          "value": 51,
+          "unit": "%",
+          "normLow": 45,
+          "normHigh": 70
+        },
+        {
+          "paramId": 43,
+          "name": "lymphocytes%",
+          "value": 35.8,
+          "unit": "%",
+          "normLow": 25,
+          "normHigh": 45
+        },
+        {
+          "paramId": 45,
+          "name": "monocytes%",
+          "value": 10.7,
+          "unit": "%",
+          "normLow": 2,
+          "normHigh": 9
+        },
+        {
+          "paramId": 47,
+          "name": "eosinophils%",
+          "value": 2.2,
+          "unit": "%",
+          "normLow": 0,
+          "normHigh": 5
+        },
+        {
+          "paramId": 46,
+          "name": "basophils%",
+          "value": 0.3,
+          "unit": "%",
+          "normLow": 0,
+          "normHigh": 1.1
+        },
+        {
+          "paramId": 48,
+          "name": "Immature granulocytes%",
+          "value": 0.3,
+          "unit": "%",
+          "normLow": 0,
+          "normHigh": 1
+        },
+        {
+          "paramId": 42,
+          "name": "Immature granulocytes#",
+          "value": 0.02,
+          "unit": "thous/µl",
+          "normLow": 0,
+          "normHigh": 0.07
+        }
+      ]
+    }
+  ]
+}

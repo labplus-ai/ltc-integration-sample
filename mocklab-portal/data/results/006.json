@@ -1,0 +1,144 @@
+{
+  "examinations": [
+    {
+      "examinationId": 43,
+      "name": "Urinalysis",
+      "params": [
+        {
+          "paramId": 76,
+          "name": "Urine clarity",
+          "value": "lekko metny",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 67,
+          "name": "Urine colour",
+          "value": "żółty",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 71,
+          "name": "Urine specific gravity",
+          "value": 1.025,
+          "unit": "",
+          "normLow": 1.023,
+          "normHigh": 1.035
+        },
+        {
+          "paramId": 86,
+          "name": "Urine pH",
+          "value": 6,
+          "unit": "",
+          "normLow": 5,
+          "normHigh": 7
+        },
+        {
+          "paramId": 74,
+          "name": "Glucose in urine",
+          "value": "nieobecna",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 75,
+          "name": "Ketones",
+          "value": "nieobecne",
+          "unit": "mg/dl",
+          "normLow": 0,
+          "normHigh": 5
+        },
+        {
+          "paramId": 90,
+          "name": "Urobilinogen",
+          "value": "w normie",
+          "unit": "mg/dl",
+          "normLow": 0,
+          "normHigh": 1
+        },
+        {
+          "paramId": 69,
+          "name": "Bilirubin",
+          "value": "nieobecna",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 68,
+          "name": "Protein in urine",
+          "value": "nieobecne",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 65,
+          "name": "Nitrites",
+          "value": "nieobecne",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 78,
+          "name": "Blood",
+          "value": "w normie",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 80,
+          "name": "Leukocytes in urine",
+          "value": "wykryto",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        }
+      ]
+    },
+    {
+      "examinationId": "3600",
+      "name": "Urine sediment",
+      "params": [
+        {
+          "paramId": 93,
+          "name": "Squamous epithelial cells",
+          "value": "nieliczne",
+          "unit": "",
+          "normLow": null,
+          "normHigh": null
+        },
+        {
+          "paramId": 92,
+          "name": "Leukocytes in urine sediment",
+          "value": "20-30",
+          "unit": "FOV",
+          "normLow": 0,
+          "normHigh": 5
+        },
+        {
+          "paramId": 96,
+          "name": "Fresh red blood cells in urine sediment",
+          "value": "1-3",
+          "unit": "FOV",
+          "normLow": 0,
+          "normHigh": 5
+        },
+        {
+          "paramId": 94,
+          "name": "Bacteria in urine sediment",
+          "value": "nieliczne",
+          "unit": "w prep.",
+          "normLow": null,
+          "normHigh": null
+        }
+      ]
+    }
+  ]
+}

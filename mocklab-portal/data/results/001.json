@@ -1,0 +1,18 @@
+{
+  "examinations": [
+    {
+      "examinationId": 21,
+      "name": "Iron",
+      "params": [
+        {
+          "paramId": 49,
+          "name": "Iron",
+          "value": 223,
+          "unit": "µg/dl",
+          "normLow": 33,
+          "normHigh": 193
+        }
+      ]
+    }
+  ]
+}
