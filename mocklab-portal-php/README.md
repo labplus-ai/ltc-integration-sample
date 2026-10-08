@@ -2,6 +2,8 @@
 
 A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in plain PHP (no framework, no database, no Composer). Orders are kept in a small JSON file.
 
+There is also a **Node.js / TypeScript version** of the same portal in `../mocklab-portal-node`.
+
 It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `order.php` only has a placeholder for it.
 
 ## Demo credentials
@@ -37,7 +39,7 @@ cp .env.dist .env
 The code is split into the **portal** (what a real patient portal would have) and the **demo simulator** (fake lab, only for this demo).
 
 ```
-mocklab-portal/
+mocklab-portal-php/
 ├── index.php            Login page
 ├── orders.php           List of orders
 ├── order.php            Order details with the results table
@@ -106,9 +108,9 @@ Point a virtual host at the project directory (`mod_php` or PHP-FPM must be enab
 ```apache
 <VirtualHost *:8080>
     ServerName mocklab.local
-    DocumentRoot /path/to/mocklab-portal
+    DocumentRoot /path/to/mocklab-portal-php
 
-    <Directory /path/to/mocklab-portal>
+    <Directory /path/to/mocklab-portal-php>
         Require all granted
         DirectoryIndex index.php
     </Directory>
@@ -123,7 +125,7 @@ Add `Listen 8080` if needed, reload Apache and open <http://localhost:8080>.
 server {
     listen 8080;
     server_name mocklab.local;
-    root /path/to/mocklab-portal;
+    root /path/to/mocklab-portal-php;
     index index.php;
 
     location / {

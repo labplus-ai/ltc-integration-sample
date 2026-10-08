@@ -1,3 +1,4 @@
 .idea/*
-mocklab-portal/.env
+mocklab-portal-php/.env
+mocklab-portal-node/.env
 local/*
