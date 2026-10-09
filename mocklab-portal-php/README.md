@@ -2,7 +2,7 @@
 
 A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in plain PHP (no framework, no database, no Composer). Orders are kept in a small JSON file.
 
-There is also a **Node.js / TypeScript version** of the same portal in `../mocklab-portal-node`.
+There is also an **Angular + ASP.NET Core version** of the same portal in `../mocklab-portal-asp_net-angular`.
 
 It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `src/order/template.php` only has a placeholder for it.
 
