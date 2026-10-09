@@ -8,7 +8,9 @@ public static class OrdersEndpoints
         api.MapGet("/patient", (Database db) => db.GetPatient());
 
         // All orders, newest first.
-        api.MapGet("/orders", (Database db) => db.GetOrders().Values.OrderByDescending(o => o.Id));
+        // The Labplus data (tokens) stays on the server, the web app gets it only through api/Labplus/.
+        api.MapGet("/orders", (Database db) => db.GetOrders().Values.OrderByDescending(o => o.Id)
+            .Select(o => o with { Labplus = null }));
 
         api.MapGet("/orders/{id}", (string id, Database db) =>
         {
@@ -16,7 +18,7 @@ public static class OrdersEndpoints
             var order = int.TryParse(id, out var orderId) ? db.GetOrder(orderId) : null;
             return order is null
                 ? Results.Json(new { error = "This order does not exist." }, statusCode: 404)
-                : Results.Json(order);
+                : Results.Json(order with { Labplus = null }); // the Labplus data stays on the server
         });
     }
 }

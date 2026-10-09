@@ -8,34 +8,53 @@ namespace Mocklab.Api;
 //
 // The files in results/ stand for what a lab keeps in its own database: the examinations of one
 // order with their measured parameters, as plain data. They are used in file name order.
-public class DataSimulator(Database db, IWebHostEnvironment env)
+public class DataSimulator(Database db, IWebHostEnvironment env,
+    PreinterpretationService preinterpretation, ILogger<DataSimulator> logger)
 {
     private const string Doctor = "Dr. Emily Carter";
 
     private static readonly JsonSerializerOptions Json = new(JsonSerializerDefaults.Web);
 
     // First run: put the starting orders in place.
-    public void EnsureStartingOrders()
+    public async Task EnsureStartingOrdersAsync()
     {
-        if (!db.HasOrders()) Reset();
+        if (!db.HasOrders()) await ResetAsync();
     }
 
     // Starting point of the demo: the first two result sets are already in the patient's account.
-    public void Reset()
+    public async Task ResetAsync()
     {
         var files = ResultFiles();
         db.SaveOrders(new Dictionary<int, Order>());
-        db.AddOrder(OrderFromResults(files[0], daysAgo: 14));
-        db.AddOrder(OrderFromResults(files[1], daysAgo: 7));
+        await StartPreinterpretationAsync(db.AddOrder(OrderFromResults(files[0], daysAgo: 14)));
+        await StartPreinterpretationAsync(db.AddOrder(OrderFromResults(files[1], daysAgo: 7)));
     }
 
     // "The lab has just released new results": adds the next result set in the queue (3rd, 4th, ...,
     // and from the beginning again after the last one) as a new order. Returns the new order.
-    public Order ReleaseNextResults()
+    public async Task<Order> ReleaseNextResultsAsync()
     {
         var files = ResultFiles();
         var next = db.GetOrders().Count % files.Length;
-        return db.AddOrder(OrderFromResults(files[next], daysAgo: 0));
+        var order = db.AddOrder(OrderFromResults(files[next], daysAgo: 0));
+        await StartPreinterpretationAsync(order);
+        return order;
+    }
+
+    // INTEGRATION: in a real lab this is the moment the LIS releases the results of an order.
+    // Start the preinterpretation now, so it is ready when the patient logs in.
+    // A failure is only logged: the order is added anyway (the order page tries to start it again).
+    // Awaited here for demo simplicity; a real LIS would do this in a background job.
+    private async Task StartPreinterpretationAsync(Order order)
+    {
+        try
+        {
+            await preinterpretation.StartAsync(order);
+        }
+        catch (Exception e)
+        {
+            logger.LogError(e, "Could not start the Labplus preinterpretation of order {OrderId}", order.Id);
+        }
     }
 
     private string[] ResultFiles()

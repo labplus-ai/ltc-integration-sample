@@ -13,6 +13,8 @@
       <div><span class="label">Doctor</span>{{ order.doctor }}</div>
     </div>
 
+    <app-preinterpretation [orderId]="order.id" />
+
     <div class="eyebrow eyebrow-line">Results</div>
     <h2 class="section-title">Test results</h2>
 
@@ -43,8 +45,6 @@
         </tbody>
       </table>
     </div>
-
-    <!-- Integration extension point: the LabTest Checker integration will be added below the results. -->
   } @else if (loaded()) {
     <div class="card"><p>This order does not exist.</p></div>
   }

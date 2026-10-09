@@ -1,0 +1,51 @@
+<section class="labplus-section">
+  @if (ltcOpen()) {
+    <div class="eyebrow eyebrow-line">LabTest Checker</div>
+    <h2 class="section-title">Your Health Report</h2>
+  } @else {
+    <div class="eyebrow eyebrow-line">Summary</div>
+    <h2 class="section-title">Results summary</h2>
+  }
+
+  <!-- Two columns: the interpretation on the left, LabTest Checker on the right (it takes the whole card when open). -->
+  <div class="card labplus-card summary" [class.summary-ltc-open]="ltcOpen()">
+    <!-- Hidden while LabTest Checker is open: LTC is a separate service, not part of the summary. -->
+    @if (!ltcOpen()) {
+      <div class="summary-text">
+        <span class="pill pill-mint summary-label">Preliminary interpretation</span>
+        @switch (result()?.status) {
+          @case ('not_configured') {
+            <p class="muted">The preliminary interpretation is not configured (see .env.dist).</p>
+          }
+          @case ('processing') {
+            @if (timedOut()) {
+              <p class="muted">Your interpretation is taking longer than usual. Please come back later.</p>
+            } @else {
+              <div class="skeleton" aria-hidden="true"><span></span><span></span><span></span></div>
+              <p class="muted">Your interpretation is being prepared&hellip;</p>
+            }
+          }
+          @case ('error') {
+            <p class="muted">The preliminary interpretation is not available right now.</p>
+          }
+          @case (undefined) {}
+          @default {
+            <!-- "done" or "fallback" (a simplified version). Angular sanitizes the HTML from Labplus. -->
+            <div class="preinterpretation-content" [innerHTML]="result()!.content"></div>
+            <p class="summary-note">An automatic interpretation of your results. It does not replace a consultation with a doctor.</p>
+          }
+        }
+      </div>
+    }
+
+    <!-- The button that opens LabTest Checker (works also when the preinterpretation is not available). -->
+    <app-labtest-checker [orderId]="orderId()" (started)="ltcOpen.set(true)" />
+  </div>
+
+  <!-- Shown only when some recommended tests can still be done on the already collected sample. -->
+  @if (!ltcOpen()) {
+    @if (result()?.recommendations?.recommendedExaminations; as recommended) {
+      <app-additional-tests [recommended]="recommended" />
+    }
+  }
+</section>

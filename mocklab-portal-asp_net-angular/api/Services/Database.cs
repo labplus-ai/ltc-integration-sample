@@ -48,6 +48,19 @@ public class Database
         }
     }
 
+    // Changes one order and saves it. Reading, changing and saving happen under one lock, so two requests
+    // that change the same order at the same time do not overwrite each other. Does nothing when the order does not exist.
+    public void UpdateOrder(int id, Func<Order, Order> change)
+    {
+        lock (FileLock)
+        {
+            var orders = GetOrders();
+            if (!orders.TryGetValue(id, out var order)) return;
+            orders[id] = change(order);
+            SaveOrders(orders);
+        }
+    }
+
     // Adds a new order and gives it an id and an order number. Returns the stored order.
     public Order AddOrder(Order order)
     {
