@@ -11,7 +11,17 @@ public record Param(int ParamId, string Name, JsonElement Value, string? Unit, d
 public record Examination(int ExaminationId, string Name, List<Param> Params);
 
 // Date is YYYY-MM-DD (the day the lab released the results), CollectedAt is YYYY-MM-DD HH:MM:SS (when the sample was taken).
-public record Order(int Id, string Number, string Date, string CollectedAt, string Doctor, List<Examination> Examinations);
+public record Order(int Id, string Number, string Date, string CollectedAt, string Doctor, List<Examination> Examinations,
+    LabplusOrderData? Labplus = null);
 
 // What the lab stores about the person. The national ID identifies them (like PESEL in Poland).
 public record Patient(string FirstName, string LastName, string Gender, string BirthDate, string NationalId, string Email, string Phone);
+
+// What the Labplus integration stores per order (like extra columns in the lab's orders table), see api/Labplus/.
+// PreinterpretationResult is the final answer of Labplus, kept so Labplus is not asked again.
+public record LabplusOrderData(
+    string? PlatformToken = null,
+    string? PreinterpretationId = null,
+    string? PreinterpretationAccessSignature = null,
+    JsonElement? PreinterpretationResult = null,
+    string? InterviewToken = null);

@@ -9,12 +9,12 @@ public static class SimulationEndpoints
     {
         // "The lab has just released new results": adds the next result set as a new order.
         api.MapPost("/data-simulation__only-for-demo/release-next-results",
-            (DataSimulator simulator) => simulator.ReleaseNextResults());
+            (DataSimulator simulator) => simulator.ReleaseNextResultsAsync());
 
         // Back to the initial 2 orders.
-        api.MapPost("/data-simulation__only-for-demo/reset", (DataSimulator simulator) =>
+        api.MapPost("/data-simulation__only-for-demo/reset", async (DataSimulator simulator) =>
         {
-            simulator.Reset();
+            await simulator.ResetAsync();
             return new { ok = true };
         });
     }

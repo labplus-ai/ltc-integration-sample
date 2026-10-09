@@ -7,7 +7,7 @@ A tiny results-pickup portal for a fictional laboratory, **MockLab**. This versi
 
 It is the **same portal as the PHP version** (`../mocklab-portal-php`): same screens, same data, same behaviour.
 
-It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `web/src/app/order/order.html` only has a placeholder for it.
+It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It shows how to integrate the Labplus services: the **preliminary interpretation** and **LabTest Checker (LTC)** on the order page (see [The Labplus integration](#the-labplus-integration)).
 
 ## Demo credentials
 
@@ -35,7 +35,7 @@ Settings are optional and read from environment variables or from a `.env` file 
 cp .env.dist .env
 ```
 
-`.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In the API use `Env.Get("KEY", "default")` (from `api/Services/Env.cs`; ASP.NET's own configuration also reads environment variables). With Docker the file is passed to the API container automatically.
+`.env` is git-ignored. The Labplus integration needs the `LABPLUS_*` keys (provided by Labplus) and your own `PATIENT_HASH_SECRET`, described in `.env.dist`; without them the portal works and the integration is switched off. In the API use `Env.Get("KEY", "default")` (from `api/Services/Env.cs`; ASP.NET's own configuration also reads environment variables). With Docker the file is passed to the API container automatically.
 
 ## Project structure
 
@@ -47,6 +47,7 @@ mocklab-portal-asp_net-angular/
 │   ├── Program.cs                            Entry point: web server, session, mounts the endpoints
 │   ├── Auth/AuthEndpoints.cs                 POST /api/login, POST /api/logout, GET /api/me
 │   ├── Orders/OrdersEndpoints.cs             GET /api/patient, /api/orders, /api/orders/{id}
+│   ├── Labplus/                              Labplus integration: request signing, platform token, preinterpretation, LTC
 │   ├── Services/
 │   │   ├── Database.cs                       The lab's data: patient and orders (storage/orders.json)
 │   │   ├── Env.cs                            Env.Get() - reads environment variables / .env
@@ -69,6 +70,7 @@ mocklab-portal-asp_net-angular/
 │           ├── orders/   orders.ts, orders.html    List of orders
 │           ├── order/    order.ts, order.html      Order details with the results table
 │           ├── layout/   page.ts, page.html        Header, hero and footer shared by all pages
+│           ├── labplus/                      Preliminary interpretation and LabTest Checker cards (order page)
 │           ├── services/
 │           │   ├── api.ts                    Calls to the API
 │           │   ├── helpers.ts                Display helpers (result flags, reference ranges, titles)
@@ -164,6 +166,6 @@ Reload Nginx and open <http://localhost:8080>. Apache works the same way: serve 
 - **The page loads but you see no data or get logged out**: make sure the API is running; sessions are kept in memory, so restarting the API logs you out.
 - **Fonts look different**: the Lexend font is loaded from Google Fonts, so it needs internet access.
 
-## What's next
+## The Labplus integration
 
-LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `web/src/app/order/order.html` (plus a new endpoint file in `api/`).
+The bare portal without the integration is on the `baseline` branch, so `git diff baseline...main` shows everything the integration requires: `api/Labplus/` (request signing, platform token, preinterpretation, LabTest Checker), `web/src/app/labplus/` (the two cards on the order page) and a few lines in existing files. The browser only talks to our API; the keys stay on the server, which signs every request to Labplus. The event bus (section 5 of the Labplus documentation) is not included.

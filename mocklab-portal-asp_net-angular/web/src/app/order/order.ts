@@ -1,6 +1,7 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
+import { Preinterpretation } from '../labplus/preinterpretation';
 import { Page } from '../layout/page';
 import { Api } from '../services/api';
 import { orderTitle, referenceText, resultFlag } from '../services/helpers';
@@ -9,7 +10,7 @@ import type { Order, Patient } from '../services/types';
 // Order details with the results table. The order is chosen by the address: /order?id=3
 @Component({
   selector: 'app-order',
-  imports: [Page, RouterLink, TitleCasePipe],
+  imports: [Page, RouterLink, TitleCasePipe, Preinterpretation],
   templateUrl: './order.html',
 })
 export class OrderView {

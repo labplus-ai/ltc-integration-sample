@@ -1,0 +1,25 @@
+<div class="ltc" [class.ltc-open]="opened()">
+  @switch (status()) {
+    @case ('not_configured') {
+      <p class="muted">LabTest Checker is not configured (see .env.dist).</p>
+    }
+    @case ('not_supported') {
+      <!-- Adults only, so there is no button (see LtcService.IsSupported in the API). -->
+      <p class="muted">LabTest Checker is available for adults only.</p>
+    }
+    @case ('error') {
+      <p class="muted">LabTest Checker is not available right now.</p>
+    }
+    @case (null) {}
+    @default {
+      @if (!opened()) {
+        <h3 class="ltc-title">See what your results mean for you</h3>
+        <p>Answer a few questions about your health and get a Health Report with an interpretation of your results.</p>
+        <button class="btn btn-teal ltc-button" type="button" [disabled]="starting()" (click)="start()">{{ buttonLabel() }}</button>
+      }
+    }
+  }
+
+  <!-- Hidden until started. The adapter script and the handshake work on this element. -->
+  <iframe #frame class="ltc-frame" title="LabTest Checker" referrerpolicy="no-referrer" [style.display]="opened() ? 'block' : 'none'"></iframe>
+</div>
