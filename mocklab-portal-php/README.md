@@ -4,7 +4,7 @@ A tiny results-pickup portal for a fictional laboratory, **MockLab**. Written in
 
 There is also an **Angular + ASP.NET Core version** of the same portal in `../mocklab-portal-asp_net-angular`.
 
-It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It is the baseline for a later step that shows how to integrate **LabTest Checker (LTC)**. The LTC integration is **not** included yet; `src/order/template.php` only has a placeholder for it.
+It is intentionally simple. It is **not** a real portal: validation and security are skipped on purpose (marked with comments in the code). It shows how to integrate the Labplus services: the **preliminary interpretation** and **LabTest Checker (LTC)** on the order page (see [The Labplus integration](#the-labplus-integration)).
 
 ## Demo credentials
 
@@ -32,7 +32,7 @@ Settings are optional and read from environment variables or from a `.env` file 
 cp .env.dist .env
 ```
 
-`.env` is git-ignored. Nothing needs to be configured yet; keys will be added later for the LabTest Checker integration. In code use `env('KEY', 'default')` (from `src/services/env.php`). With Docker the file is passed to the container automatically.
+`.env` is git-ignored. The Labplus integration needs the `LABPLUS_*` keys (provided by Labplus) and your own `PATIENT_HASH_SECRET`, described in `.env.dist`; without them the portal works and the integration is switched off. In code use `env('KEY', 'default')` (from `src/services/env.php`). With Docker the file is passed to the container automatically.
 
 ## Project structure
 
@@ -48,6 +48,8 @@ mocklab-portal-php/
 │   ├── orders/       index.php, template.php     List of orders
 │   ├── order/        index.php, template.php     Order details with the results table
 │   ├── logout/       index.php
+│   ├── labplus/                          Labplus integration: request signing, platform token, preinterpretation, LTC,
+│   │                                     the results summary on the order page (+ labplus.js and api/ for the browser)
 │   ├── services/
 │   │   ├── db.php                        The lab's data: patient and orders (storage/orders.json)
 │   │   ├── helpers.php                   Display helpers (escaping, result flags, reference ranges)
@@ -151,6 +153,6 @@ Adjust the `fastcgi_pass` value to your PHP-FPM socket, then reload Nginx and op
 - **Redirected to login all the time**: cookies must be enabled in your browser.
 - **Fonts look different**: the Lexend font is loaded from Google Fonts, so it needs internet access.
 
-## What's next
+## The Labplus integration
 
-LabTest Checker (LTC) integration will be added in a later step, on a separate branch, so that `git diff` shows everything the integration requires. The marked place is in `src/order/template.php`.
+The bare portal without the integration is on the `baseline` branch, so `git diff baseline...integration/php` shows everything the integration requires: `src/labplus/` (request signing, platform token, preinterpretation, LabTest Checker, the results summary and its script) and a few lines in existing files. The browser only talks to our pages; the keys stay on the server, which signs every request to Labplus. The event bus (section 5 of the Labplus documentation) is not included.
