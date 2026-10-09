@@ -1,0 +1,37 @@
+# Starts the whole stack: the API and the Angular web app. Open http://localhost:4200
+# The API is not published to the host: the web app forwards /api requests to it.
+services:
+  api:
+    build: ./api
+    environment:
+      # Makes file watching work on mounted folders.
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    # Optional settings (copy .env.dist to .env). The file does not have to exist.
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Mount the source for live editing (the API restarts when you edit a file).
+      - ./api:/app
+      # Build output stays inside the container.
+      - /app/bin
+      - /app/obj
+      # Keep the demo state (orders) in a Docker volume, so it survives restarts.
+      # `docker compose down -v` removes it, which resets the demo.
+      - api-state:/app/storage
+
+  web:
+    build: ./web
+    depends_on:
+      - api
+    ports:
+      - "4200:4200"
+    environment:
+      # Where the dev server forwards /api requests (see web/proxy.conf.js).
+      API_URL: http://api:3001
+    volumes:
+      # Mount the source for live editing (the browser reloads when you edit a file).
+      - ./web/src:/app/src
+
+volumes:
+  api-state:

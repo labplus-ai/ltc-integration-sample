@@ -1,0 +1,20 @@
+<app-page eyebrow="Patient portal" title="Your lab results" subtitle="Log in to see your orders and test results.">
+  <div class="card login-card">
+    <h2>Log in</h2>
+    <p class="muted">Demo credentials are already filled in. Just press the button.</p>
+
+    @if (error()) {
+      <div class="alert">{{ error() }}</div>
+    }
+
+    <form (submit)="submit($event, usernameInput.value, passwordInput.value)">
+      <label for="username">Username</label>
+      <input #usernameInput id="username" type="text" [value]="username">
+
+      <label for="password">Password</label>
+      <input #passwordInput id="password" type="password" [value]="password">
+
+      <button class="btn btn-primary" type="submit">Log in</button>
+    </form>
+  </div>
+</app-page>

@@ -1,0 +1,39 @@
+<app-page eyebrow="Patient portal" title="Your lab results" subtitle="Pick an order to see its results.">
+  @if (flash()) {
+    <div class="notice">{{ flash() }}</div>
+  }
+
+  @if (patient(); as patient) {
+    <div class="card info-card">
+      <div><span class="label">Patient</span>{{ patient.firstName }} {{ patient.lastName }}</div>
+      <div><span class="label">Gender, age</span>{{ patientText(patient) }}</div>
+      <div><span class="label">Date of birth</span>{{ patient.birthDate }}</div>
+      <div><span class="label">National ID</span>{{ patient.nationalId }}</div>
+    </div>
+  }
+
+  <div class="eyebrow eyebrow-line">Orders</div>
+  <h2 class="section-title">Your orders</h2>
+  <p class="muted">All tests done for you at MockLab.</p>
+
+  <!-- DEMO ONLY -->
+  <app-demo-box (changed)="onSimulationChange($event)" />
+
+  <div class="grid">
+    @for (order of orders(); track order.id) {
+      <a class="card order-card" routerLink="/order" [queryParams]="{ id: order.id }">
+        <span class="num-badge">{{ order.id.toString().padStart(2, '0') }}</span>
+        <h3>{{ orderTitle(order) }}</h3>
+        <p class="muted">{{ order.number }} &middot; {{ order.date }}</p>
+        <div class="tags">
+          <span class="pill pill-grey">{{ orderParams(order).length }} results</span>
+          @if (countOutOfRange(order); as outOfRange) {
+            <span class="pill pill-alert">{{ outOfRange }} out of range</span>
+          } @else {
+            <span class="pill pill-mint">All in range</span>
+          }
+        </div>
+      </a>
+    }
+  </div>
+</app-page>

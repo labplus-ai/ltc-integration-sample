@@ -1,0 +1,51 @@
+<app-page
+  [eyebrow]="'Order ' + (order()?.number ?? '')"
+  [title]="order() ? orderTitle(order()!) : (loaded() ? 'Order not found' : '')"
+  [subtitle]="order() ? 'Results from ' + order()!.date : ''"
+>
+  <a class="back-link" routerLink="/orders">&larr; Back to orders</a>
+
+  @if (order(); as order) {
+    <div class="card info-card">
+      <div><span class="label">Order number</span>{{ order.number }}</div>
+      <div><span class="label">Date</span>{{ order.date }}</div>
+      <div><span class="label">Patient</span>{{ patient()?.firstName }} {{ patient()?.lastName }}</div>
+      <div><span class="label">Doctor</span>{{ order.doctor }}</div>
+    </div>
+
+    <div class="eyebrow eyebrow-line">Results</div>
+    <h2 class="section-title">Test results</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Test</th><th>Result</th><th>Unit</th><th>Reference range</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          @for (exam of order.examinations; track exam.examinationId) {
+            <tr class="exam-row"><td colspan="5">{{ exam.name }}</td></tr>
+            @for (param of exam.params; track param.paramId) {
+              <tr>
+                <td><strong>{{ param.name }}</strong></td>
+                <td>{{ param.value }}</td>
+                <td>{{ param.unit }}</td>
+                <td>{{ referenceText(param) }}</td>
+                <td>
+                  @if (resultFlag(param) === 'none') {
+                    <span class="muted">-</span>
+                  } @else {
+                    <span [class]="'badge badge-' + resultFlag(param)">{{ resultFlag(param) | titlecase }}</span>
+                  }
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Integration extension point: the LabTest Checker integration will be added below the results. -->
+  } @else if (loaded()) {
+    <div class="card"><p>This order does not exist.</p></div>
+  }
+</app-page>

@@ -1,0 +1,9 @@
+{
+  "firstName": "John",
+  "lastName": "Smith",
+  "gender": "male",
+  "birthDate": "1992-10-20",
+  "nationalId": "921020-4417",
+  "email": "john.smith@example.com",
+  "phone": "+48111222333"
+}

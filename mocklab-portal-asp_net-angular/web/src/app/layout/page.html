@@ -1,0 +1,29 @@
+<header class="site-header">
+  <div class="container header-inner">
+    <a class="logo" routerLink="/orders" aria-label="MockLab">mocklab<sup>+</sup></a>
+    @if (api.user()) {
+      <div class="header-user">
+        <span>{{ api.user() }}</span>
+        <button class="btn btn-outline" type="button" (click)="logout()">Log out</button>
+      </div>
+    }
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="eyebrow eyebrow-light">{{ eyebrow() }}</div>
+    <h1>{{ title() }}</h1>
+    @if (subtitle()) {
+      <p>{{ subtitle() }}</p>
+    }
+  </div>
+</section>
+
+<main class="container main">
+  <ng-content />
+</main>
+
+<footer class="site-footer">
+  <div class="container">MockLab Patient Portal &middot; Demo application, all data is fictional.</div>
+</footer>
