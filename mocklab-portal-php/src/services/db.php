@@ -46,6 +46,21 @@ class Database
         file_put_contents($this->ordersFile, json_encode($orders, JSON_PRETTY_PRINT), LOCK_EX);
     }
 
+    // Changes one order and saves it. Reading, changing and saving happen under one file lock, so two requests
+    // that change the same order at the same time do not overwrite each other. Does nothing when the order does not exist.
+    function updateOrder(int $id, callable $change): void
+    {
+        $lock = fopen(sys_get_temp_dir() . '/mocklab-orders.lock', 'c');
+        flock($lock, LOCK_EX);
+        $orders = $this->getOrders();
+        if (isset($orders[$id])) {
+            $orders[$id] = $change($orders[$id]);
+            $this->saveOrders($orders);
+        }
+        flock($lock, LOCK_UN);
+        fclose($lock);
+    }
+
     // Adds a new order and gives it an id and an order number. Returns the stored order.
     function addOrder(array $order): array
     {

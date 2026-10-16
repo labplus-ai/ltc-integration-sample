@@ -12,6 +12,8 @@
         <div><span class="label">Doctor</span><?= e($order['doctor']) ?></div>
     </div>
 
+    <?php include __DIR__ . '/../labplus/summary.php'; ?>
+
     <div class="eyebrow eyebrow-line">Results</div>
     <h2 class="section-title">Test results</h2>
 
@@ -42,8 +44,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Integration extension point: the LabTest Checker integration will be added below the results. -->
 <?php endif; ?>
 
 <?php include __DIR__ . '/../partials/footer.php'; ?>

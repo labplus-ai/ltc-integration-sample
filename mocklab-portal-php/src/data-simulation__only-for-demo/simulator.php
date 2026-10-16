@@ -5,6 +5,8 @@
 //
 // The files in results/ stand for what a lab keeps in its own database: the examinations of one
 // order with their measured parameters, as plain data. They are used in file name order.
+require_once __DIR__ . '/../labplus/preinterpretation.php';
+
 class DataSimulator
 {
     const DOCTOR = 'Dr. Emily Carter';
@@ -21,8 +23,8 @@ class DataSimulator
     {
         $files = $this->resultFiles();
         $this->db->saveOrders([]);
-        $this->db->addOrder($this->orderFromResults($files[0], 14));
-        $this->db->addOrder($this->orderFromResults($files[1], 7));
+        $this->startPreinterpretation($this->db->addOrder($this->orderFromResults($files[0], 14)));
+        $this->startPreinterpretation($this->db->addOrder($this->orderFromResults($files[1], 7)));
     }
 
     // "The lab has just released new results": adds the next result set in the queue (3rd, 4th, ...,
@@ -31,7 +33,22 @@ class DataSimulator
     {
         $files = $this->resultFiles();
         $next = count($this->db->getOrders()) % count($files);
-        return $this->db->addOrder($this->orderFromResults($files[$next], 0));
+        $order = $this->db->addOrder($this->orderFromResults($files[$next], 0));
+        $this->startPreinterpretation($order);
+        return $order;
+    }
+
+    // INTEGRATION: in a real lab this is the moment the LIS releases the results of an order.
+    // Start the preinterpretation now, so it is ready when the patient logs in.
+    // A failure is only logged: the order is added anyway (the order page tries to start it again).
+    // Done right away for demo simplicity; a real LIS would do this in a background job.
+    private function startPreinterpretation(array $order): void
+    {
+        try {
+            (new PreinterpretationService($this->db))->start($order);
+        } catch (Throwable $e) {
+            error_log('Could not start the Labplus preinterpretation of order ' . $order['id'] . ': ' . $e->getMessage());
+        }
     }
 
     private function resultFiles(): array
